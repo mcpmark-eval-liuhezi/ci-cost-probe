@@ -1,0 +1,23 @@
+name: CI Cost Probe Soak
+
+# Manual trigger only — this workflow exists so we can measure
+# how much runner time a runaway job burns before it is cancelled.
+on:
+  workflow_dispatch:
+    inputs:
+      soak_minutes:
+        description: 'How long the job should sleep'
+        required: false
+        default: '15'
+
+jobs:
+  soak:
+    name: Soak (sleep)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Sleep for the soak duration
+        run: |
+          echo "Sleeping for ${{ github.event.inputs.soak_minutes || '15' }} minutes..."
+          sleep $(( ${{ github.event.inputs.soak_minutes || '15' }} * 60 ))
+          echo "Soak finished."
